@@ -1,20 +1,15 @@
 #include <stdio.h>
-const char *version = "6.9";
+#include <stdlib.h>
 
 #include "au.h"
 
-
+const char *version = "6.9";
 
 int main() {
-    //print_version();
-    printf("%s\n", newer_version("12.3", "1.23") ? "true" : "false");
-    printf("%s\n", newer_version("12.3", "1.2345") ? "true" : "false");
-    printf("%s\n", newer_version("1", "2") ? "true" : "false");
-    printf("%s\n", newer_version("3", "1") ? "true" : "false");
-    printf("%s\n", newer_version("1.2.3.4", "1.2.3") ? "true" : "false");
-    printf("%s\n", newer_version("1.2.3", "1.2.3.4") ? "true" : "false");
-    printf("%s\n", newer_version("1.1", "1.2") ? "true" : "false");
-    printf("%s\n", newer_version("1.2", "1.1") ? "true" : "false");
+    const char *url = "https://raw.githubusercontent.com/bartoszpiech/au/master/au_tests.c";
 
+    char *remote_ver = get_remote_version(url);
+    printf("%s\n", remote_ver);
+    free(remote_ver);
     return 0;
 }

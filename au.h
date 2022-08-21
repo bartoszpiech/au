@@ -7,5 +7,6 @@ extern const char *version;
 
 void print_version();
 bool newer_version(const char *v1, const char *v2);
+char *get_remote_version(const char *url);
 
 #endif

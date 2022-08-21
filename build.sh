@@ -1,7 +1,7 @@
 #!/bin/sh
 
 CC=gcc
-CFLAGS="-Wall -pedantic -std=c11 -g"
+CFLAGS="-Wall -pedantic -std=c11 -g -lcurl"
 INC=au.c
 OBJ=au.o
 SRC=au_tests.c

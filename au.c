@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
+#include <curl/curl.h>
 
 void print_version() {
     printf("Current version :%s\n", version);
@@ -35,19 +37,40 @@ bool newer_version(const char *v1, const char *v2) {
             }
         }
     }
+    /*
     if (strlen(v1) > strlen(v2)) {
         return true;
     }
+    */
     return false;
 }
 
+static size_t 
+write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
+    char *udata = (char *)userdata;
+    size_t bytes = size * nmemb;
+    char *version = strstr(ptr, "const char *version");
+    if (version != NULL) {
+        // find apostrophes
+        char *firstapost = index(version, '"');
+        char *secondapost = index(firstapost + 1, '"');
+        int len = secondapost - firstapost - 1;
+        strncpy(udata, firstapost + 1, len);
+        udata[len] = 0;
+    }
+    return bytes;
+}
 char *get_remote_version(const char *url) {
     CURL *curl = curl_easy_init();
+    char *data = malloc(sizeof(char) * 1024);
     if(curl) {
-        CURLcode res;
+        //CURLcode res;
         curl_easy_setopt(curl, CURLOPT_URL, url);
-        res = curl_easy_perform(curl);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, data);
+        //res = curl_easy_perform(curl);
+        curl_easy_perform(curl);
         curl_easy_cleanup(curl);
     }
-    return "AAA";
+    return data;
 }
