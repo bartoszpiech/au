@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-const char *version = "7.1.1";
+const char *version = "7.2.1";
 
 #include "au.h"
 
