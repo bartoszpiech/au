@@ -1,6 +1,5 @@
 #include <stdio.h>
-
-char *version = "6.9";
+const char *version = "6.9";
 
 #include "au.h"
 

@@ -21,7 +21,7 @@ bool newer_version(const char *v1, const char *v2) {
     for (size_t i = 0; i == 0 || (v1[i-1] != '\0' && v2[i-1]) != '\0'; i++) {
         bool del1 = is_delimiter(v1[i]);
         bool del2 = is_delimiter(v2[i]);
-        if (del1 ^ del2) {  // xor gate
+        if (del1 ^ del2) {  // xor gate (one of them is delimiter)
             return del2;
         } else if (del1 && del2) {
             int l1 = strtol(&v1[index + 1], NULL, 0);
@@ -39,4 +39,15 @@ bool newer_version(const char *v1, const char *v2) {
         return true;
     }
     return false;
+}
+
+char *get_remote_version(const char *url) {
+    CURL *curl = curl_easy_init();
+    if(curl) {
+        CURLcode res;
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+    }
+    return "AAA";
 }
