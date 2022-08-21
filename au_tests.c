@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "au.h"
+const char *version = "7.1.1";
 
-const char *version = "6.9";
+#include "au.h"
 
 int main() {
     const char *url = "https://raw.githubusercontent.com/bartoszpiech/au/master/au_tests.c";
