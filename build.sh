@@ -10,3 +10,5 @@ BIN=tests
 $CC $CFLAGS -c $INC -o $OBJ
 
 $CC $CFLAGS $SRC $OBJ -o $BIN
+
+./tests
