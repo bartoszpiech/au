@@ -63,13 +63,17 @@ char *get_remote_version(const char *url) {
     CURL *curl = curl_easy_init();
     char *data = malloc(sizeof(char) * 1024);
     if(curl) {
-        //CURLcode res;
+        CURLcode res;
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, data);
-        //res = curl_easy_perform(curl);
+        res = curl_easy_perform(curl);
         curl_easy_perform(curl);
         curl_easy_cleanup(curl);
+        if (res != CURLE_OK) {
+            free(data);
+            return NULL;
+        }
     }
     return data;
 }
@@ -84,8 +88,8 @@ download_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
     return bytes;
 }
 
-void download_new_binary(const char *url) {
-    FILE *file = fopen("file", "wb");
+void download_new_binary(const char *url, const char *file_name) {
+    FILE *file = fopen(file_name, "wb");
     CURL *curl = curl_easy_init();
     if(curl) {
         //CURLcode res;
@@ -97,4 +101,18 @@ void download_new_binary(const char *url) {
         curl_easy_cleanup(curl);
     }
     fclose(file);
+}
+
+void check_for_updates() {
+    char *remote_ver = get_remote_version(url);
+    if (remote_ver == NULL) {
+        fprintf(stderr, "Error, could not check for updates\n");
+        return;
+    }
+    bool needs_update = newer_version(remote_ver, version);
+    if (needs_update) {
+        download_new_binary(binurl, binname);
+        printf("updated the software from version %s to %s, please restart the program\n", version, remote_ver);
+    }
+    free(remote_ver);
 }
