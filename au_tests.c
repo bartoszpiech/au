@@ -2,14 +2,13 @@
 #include <stdlib.h>
 
 const char *version = "7.1.0";
-const char *url = "https://raw.githubusercontent.com/bartoszpiech/au/master/au_tests.c";
-const char *binurl = "http://panamint.ict.pwr.wroc.pl/~bpiech/uploads/au/tests";
-const char *binname = "tests";
+const char *src_url = "https://raw.githubusercontent.com/bartoszpiech/au/master/au_tests.c";
+const char *bin_url = "http://panamint.ict.pwr.wroc.pl/~bpiech/uploads/au/tests";
 
 #include "au.h"
 
-int main() {
+int main(int argc, char **argv) {
     print_version();
-    check_for_updates();
+    ask_and_update(argv[0]);
     return 0;
 }

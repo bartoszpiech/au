@@ -5,6 +5,8 @@
 #include <string.h>
 #include <strings.h>
 #include <curl/curl.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 void print_version() {
     printf("Current version :%s\n", version);
@@ -82,9 +84,8 @@ static size_t
 download_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
     FILE *fp = (FILE *)userdata;
     size_t bytes = size * nmemb;
-    printf("received %ld bytes\n", bytes);
+    //printf("received %ld bytes\n", bytes);
     fwrite(ptr, size, nmemb, fp);
-
     return bytes;
 }
 
@@ -92,27 +93,48 @@ void download_new_binary(const char *url, const char *file_name) {
     FILE *file = fopen(file_name, "wb");
     CURL *curl = curl_easy_init();
     if(curl) {
-        //CURLcode res;
+        CURLcode res;
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, download_callback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
-        //res = curl_easy_perform(curl);
-        curl_easy_perform(curl);
+        res = curl_easy_perform(curl);
         curl_easy_cleanup(curl);
+        if (res != CURLE_OK) {
+            fprintf(stderr, "Error, could not download new binary\n");
+        }
     }
     fclose(file);
+    chmod(file_name, 0755); // set to executable
 }
 
-void check_for_updates() {
-    char *remote_ver = get_remote_version(url);
+bool needs_update() {
+    char *remote_ver = get_remote_version(src_url);
     if (remote_ver == NULL) {
         fprintf(stderr, "Error, could not check for updates\n");
-        return;
+        return false;
     }
-    bool needs_update = newer_version(remote_ver, version);
-    if (needs_update) {
-        download_new_binary(binurl, binname);
-        printf("updated the software from version %s to %s, please restart the program\n", version, remote_ver);
-    }
+    bool res = newer_version(remote_ver, version);
+    printf("Updating the software from version %s to %s, please restart the program\n", version, remote_ver);
     free(remote_ver);
+    return res;
+}
+
+void update(const char *prog_name) {
+    if (needs_update()) {
+        unlink(prog_name);  // delete anyway
+        download_new_binary(bin_url, prog_name);
+    }
+}
+
+void ask_and_update(const char *prog_name) {
+    if (needs_update()) {
+        printf("There's a new update available, do you want to update your software now? [Yes/No]\n");
+        char ans[4];
+        scanf("%s", ans);
+        if (ans[0] == 'Y' || ans[0] == 'y') {
+            update(prog_name);
+        } else {
+            printf("Ok, bye\n");
+        }
+    }
 }
