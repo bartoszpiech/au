@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
 
 ### Compilation
 Steps to compile the module (use your compiler instead of $CC):
-- `$CC -c au.c -o au.o`
+- `$CC -c au.c -o au.o -lcurl`
 - `$cc main.c au.o -o main`
 
 You also could use a shell script that i prepared, but fiddle around and modify it to meet your needs.
@@ -63,3 +63,4 @@ You can use those functions to update your program:
 - `void update(const char *prog_name);`
 - `void ask_and_update(const char *prog_name);`
 
+Add `-lcurl` flag into your compilation unit
