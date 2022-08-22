@@ -37,11 +37,9 @@ bool newer_version(const char *v1, const char *v2) {
             }
         }
     }
-    /*
     if (strlen(v1) > strlen(v2)) {
         return true;
     }
-    */
     return false;
 }
 
@@ -60,6 +58,7 @@ write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
     }
     return bytes;
 }
+
 char *get_remote_version(const char *url) {
     CURL *curl = curl_easy_init();
     char *data = malloc(sizeof(char) * 1024);
@@ -73,4 +72,29 @@ char *get_remote_version(const char *url) {
         curl_easy_cleanup(curl);
     }
     return data;
+}
+
+static size_t 
+download_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
+    FILE *fp = (FILE *)userdata;
+    size_t bytes = size * nmemb;
+    printf("received %ld bytes\n", bytes);
+    fwrite(ptr, size, nmemb, fp);
+
+    return bytes;
+}
+
+void download_new_binary(const char *url) {
+    FILE *file = fopen("file", "wb");
+    CURL *curl = curl_easy_init();
+    if(curl) {
+        //CURLcode res;
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, download_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+        //res = curl_easy_perform(curl);
+        curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+    }
+    fclose(file);
 }
