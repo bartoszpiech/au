@@ -1,5 +1,7 @@
-#include "au.h"
+#ifndef AU_H
+#define AU_H
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,6 +9,18 @@
 #include <curl/curl.h>
 #include <unistd.h>
 #include <sys/stat.h>
+
+extern const char *version;
+extern const char *src_url;
+extern const char *bin_url;
+
+// function declarations
+void print_version();
+bool newer_version(const char *v1, const char *v2);
+char *get_remote_version(const char *url);
+void download_new_binary(const char *url, const char *file_name);
+void update(const char *prog_name);
+void ask_and_update(const char *prog_name);
 
 void print_version() {
     printf("Current version :%s\n", version);
@@ -114,9 +128,7 @@ bool needs_update() {
         return false;
     }
     bool res = newer_version(remote_ver, version);
-    if (res) {
-        printf("Updating the software from version %s to %s, please restart the program\n", version, remote_ver);
-    }
+    printf("Updating the software from version %s to %s, please restart the program\n", version, remote_ver);
     free(remote_ver);
     return res;
 }
@@ -140,3 +152,4 @@ void ask_and_update(const char *prog_name) {
         }
     }
 }
+#endif
