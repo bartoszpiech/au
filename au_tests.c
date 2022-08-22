@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-const char *version = "7.1.2";
+const char *version = "7.1.1";
 const char *url = "https://raw.githubusercontent.com/bartoszpiech/au/master/au_tests.c";
 const char *binurl = "http://panamint.ict.pwr.wroc.pl/~bpiech/uploads/au/tests";
 
